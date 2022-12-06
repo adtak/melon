@@ -1,11 +1,13 @@
 import os
-from typing import Dict
+from typing import Dict, List
 
 import requests
 from bs4 import BeautifulSoup
 
 
-def parse_search_list(url, basic_info_list):
+def parse_search_list(
+    url: str, basic_info_list: List[Dict[str, str]]
+) -> List[Dict[str, str]]:
     list_page = BeautifulSoup(requests.get(url).content, "html.parser")
     for unit in list_page.find_all("h2", class_="property_unit-title"):
         basic_info_list.append(
@@ -19,7 +21,7 @@ def parse_search_list(url, basic_info_list):
     return basic_info_list
 
 
-def parse_basic_info(url) -> Dict[str, str]:
+def parse_basic_info(url: str) -> Dict[str, str]:
     unit_page = BeautifulSoup(requests.get(url).content, "html.parser")
     main_contents = unit_page.find("div", id="mainContents")
     for section in main_contents.find_all("div", class_="section_h2"):
