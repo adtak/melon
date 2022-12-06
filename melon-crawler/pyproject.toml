@@ -2,7 +2,7 @@
 name = "melon-crawler"
 version = "0.1.0"
 description = ""
-authors = [""]
+authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 packages = [{include = "melon_crawler"}]
 
@@ -11,6 +11,7 @@ python = "^3.9"
 beautifulsoup4 = "^4.11.1"
 requests = "^2.28.1"
 python-dotenv = "^0.21.0"
+pandas = "^1.5.2"
 
 
 [tool.poetry.group.dev.dependencies]
