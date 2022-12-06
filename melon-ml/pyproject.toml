@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "melon-ml"
+version = "0.1.0"
+description = ""
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "melon_ml"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^1.5.2"
+ipykernel = "^6.17.1"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^6.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
