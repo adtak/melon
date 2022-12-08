@@ -38,7 +38,11 @@ def parse_summary(url, main_contents):
     result = {"URL": url}
     for th, td in zip(summary.find_all("th"), summary.find_all("td")):
         key = th.get_text(strip=True).replace("ヒント", "")
-        value = td.get_text(strip=True)
+        value = (
+            td.get_text(strip=True)
+            .replace("[乗り換え案内]", "/")
+            .replace("[□支払シミュレーション]", "")
+        )
         result[key] = value
     return result
 
