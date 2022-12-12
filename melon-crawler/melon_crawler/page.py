@@ -1,8 +1,8 @@
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Tag
 
 
 def parse_search_list(
@@ -21,7 +21,7 @@ def parse_search_list(
     return basic_info_list
 
 
-def parse_detail(url: str) -> Dict[str, str]:
+def parse_detail(url: str) -> List[Dict[str, str]]:
     detail_page = BeautifulSoup(requests.get(url).content, "html.parser")
     main_contents = detail_page.find("div", id="mainContents")
     summary = parse_summary(url, main_contents)
@@ -29,12 +29,15 @@ def parse_detail(url: str) -> Dict[str, str]:
     return [layout | summary for layout in layouts]
 
 
-def parse_summary(url, main_contents):
-    summary = None
+def parse_summary(url: str, main_contents: Tag) -> Dict[str, str]:
+    option_summary: Optional[Tag] = None
     for div_tag in main_contents.find_all("div", class_="section_h2"):
         if "物件概要" in div_tag.find("button").text:
-            summary = div_tag
+            option_summary = div_tag
             break
+    if option_summary is None:
+        raise RuntimeError("Summary is None.")
+    summary: Tag = option_summary
     result = {"URL": url}
     for th, td in zip(summary.find_all("th"), summary.find_all("td")):
         key = th.get_text(strip=True).replace("ヒント", "")
@@ -47,7 +50,7 @@ def parse_summary(url, main_contents):
     return result
 
 
-def parse_layouts(main_contents):
+def parse_layouts(main_contents: Tag) -> List[Dict[str, str]]:
     layout = None
     for div_tag in main_contents.find_all("div", class_="mt20"):
         h3_tag = div_tag.find("h3")
