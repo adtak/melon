@@ -10,6 +10,7 @@ packages = [{include = "melon_ml"}]
 python = "^3.9"
 pandas = "^1.5.2"
 ipykernel = "^6.17.1"
+scikit-learn = "^1.2.0"
 
 
 [tool.poetry.group.dev.dependencies]
