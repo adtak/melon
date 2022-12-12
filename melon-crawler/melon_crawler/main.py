@@ -16,11 +16,11 @@ def main() -> None:
 
 
 def concat_original_data(latest_data: pd.DataFrame) -> None:
-    original_data = pd.read_csv("../data/raw_data.csv", dtype="str")
+    original_data = pd.read_csv("data/raw_data.csv", dtype="str")
     df = pd.concat(
         [original_data, latest_data],
         axis=0,
-    ).drop_duplicates(cols="URL", keep="first")
+    ).drop_duplicates(subset=["URL", "name"], keep="first")
     df.to_csv("data/raw_data.csv", index=False)
 
 
