@@ -10,8 +10,11 @@ def main() -> None:
     pass
 
 
-def _load_wav(path: Path) -> list[AudioSegment]:
-    files = sorted(path.glob("*_lofi_*.wav"), key=lambda x: int(x.name.split("_")[0]))
+def _load_wav(file_path: Path) -> list[AudioSegment]:
+    files = sorted(
+        file_path.glob("*_lofi_*.wav"),
+        key=lambda x: int(x.name.split("_")[0]),
+    )
     logger.debug([f.name for f in files])
     return [AudioSegment.from_wav(audio_path) for audio_path in files]
 
@@ -28,24 +31,24 @@ def _fade_inout(audio: AudioSegment, fade_sec: int) -> AudioSegment:
     return audio.fade_in(fade_sec * 1000).fade_out(fade_sec * 1000)
 
 
-def merge(input_path: str) -> None:
-    input_dir = Path(input_path)
-    audios = _load_wav(input_dir)
+def merge(input_dir: str) -> None:
+    input_path = Path(input_dir)
+    audios = _load_wav(input_path)
     combined = _combine(audios, 10)
-    combined.export(input_dir / "audio.wav", format="wav")
+    combined.export(input_path / "audio.wav", format="wav")
 
 
-def split(input_path: str, duration: int = 30_000) -> None:
-    input_dir = Path(input_path)
-    output_dir = input_dir / "split"
-    output_dir.mkdir(exist_ok=True)
-    for file in input_dir.glob("*.mp3"):
+def split(input_dir: str, duration: int = 30_000) -> None:
+    input_path = Path(input_dir)
+    output_path = input_path / "split"
+    output_path.mkdir(exist_ok=True)
+    for file in input_path.glob("*.mp3"):
         logger.info(f"Split audio {file.name}")
-        audio = AudioSegment.from_file(input_dir / file).set_frame_rate(44100)
+        audio = AudioSegment.from_file(input_path / file).set_frame_rate(44100)
         for i in range(0, len(audio), duration):
             chunk = audio[i : i + duration]
             chunk.export(
-                output_dir
+                output_path
                 / (re.sub(r"\W+", "_", file.stem) + f" - chunk{i//1000}.wav"),
                 format="wav",
             )
