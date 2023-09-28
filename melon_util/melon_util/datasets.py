@@ -6,6 +6,7 @@ from typing import Self
 
 import librosa
 import numpy as np
+from dotenv import load_dotenv
 
 FINETUNE_KEYWORD = "melonfinetune"
 
@@ -96,6 +97,5 @@ datasource:
 
 
 if __name__ == "__main__":
-    main(
-        "outputs/split",
-    )
+    load_dotenv()
+    main("outputs/split")
