@@ -1,4 +1,4 @@
-import os
+import re
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -7,28 +7,46 @@ from pydub import AudioSegment
 
 
 def main() -> None:
-    path = Path(os.environ["PROJECT_PATH"])
-    audios = load_wav(path)
-    combined = combine(audios, 10)
-    combined.export(path / "audio.wav", format="wav")
+    pass
 
 
-def load_wav(path: Path) -> list[AudioSegment]:
+def _load_wav(path: Path) -> list[AudioSegment]:
     files = sorted(path.glob("*_lofi_*.wav"), key=lambda x: int(x.name.split("_")[0]))
     logger.debug([f.name for f in files])
     return [AudioSegment.from_wav(audio_path) for audio_path in files]
 
 
-def combine(audios: list[AudioSegment], fade_sec: int) -> AudioSegment:
+def _combine(audios: list[AudioSegment], fade_sec: int) -> AudioSegment:
     combined = AudioSegment.empty()
     for audio in audios:
-        combined += fade_inout(audio, fade_sec)
+        combined += _fade_inout(audio, fade_sec)
         combined += AudioSegment.silent(duration=100)
     return combined
 
 
-def fade_inout(audio: AudioSegment, fade_sec: int) -> AudioSegment:
+def _fade_inout(audio: AudioSegment, fade_sec: int) -> AudioSegment:
     return audio.fade_in(fade_sec * 1000).fade_out(fade_sec * 1000)
+
+
+def merge(input_path: str) -> None:
+    input_dir = Path(input_path)
+    audios = _load_wav(input_dir)
+    combined = _combine(audios, 10)
+    combined.export(input_dir / "audio.wav", format="wav")
+
+
+def split(input_path: str) -> None:
+    input_dir = Path(input_path)
+    output_dir = input_dir / "split"
+    output_dir.mkdir()
+    for file in input_dir.glob("*.mp3"):
+        audio = AudioSegment.from_file(input_dir / file).set_frame_rate(44100)
+        for i in range(0, len(audio), 30000):
+            chunk = audio[i : i + 30000]
+            chunk.export(
+                output_dir / re.sub(r"\W+", "_", file[:-4]) / f" - chunk{i//1000}.wav",
+                format="wav",
+            )
 
 
 if __name__ == "__main__":
