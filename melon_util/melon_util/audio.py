@@ -38,13 +38,14 @@ def merge(input_path: str) -> None:
 def split(input_path: str) -> None:
     input_dir = Path(input_path)
     output_dir = input_dir / "split"
-    output_dir.mkdir()
+    output_dir.mkdir(exist_ok=True)
     for file in input_dir.glob("*.mp3"):
         audio = AudioSegment.from_file(input_dir / file).set_frame_rate(44100)
         for i in range(0, len(audio), 30000):
             chunk = audio[i : i + 30000]
             chunk.export(
-                output_dir / re.sub(r"\W+", "_", file[:-4]) / f" - chunk{i//1000}.wav",
+                output_dir
+                / (re.sub(r"\W+", "_", file.stem) + f" - chunk{i//1000}.wav"),
                 format="wav",
             )
 
