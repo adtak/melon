@@ -1,4 +1,5 @@
 import json
+import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Self
@@ -6,12 +7,14 @@ from typing import Self
 import librosa
 import numpy as np
 
+FINETUNE_KEYWORD = "melonfinetune"
 
-def main(datasets_dir: str, custom_model_keywords: str) -> None:
+
+def main(datasets_dir: str) -> None:
     datasets_path = Path(datasets_dir)
     train, test = train_test_split(list(datasets_path.glob("*.wav")), 0.8)
-    save_metadata(train, datasets_path / "train.jsonl", custom_model_keywords)
-    save_metadata(test, datasets_path / "eval.jsonl", custom_model_keywords)
+    save_metadata(train, datasets_path / "train.jsonl")
+    save_metadata(test, datasets_path / "eval.jsonl")
     save_config(datasets_path)
 
 
@@ -38,7 +41,7 @@ class DataMeta:
     path: str
 
     @classmethod
-    def from_audio(cls: type[Self], file: Path, keywords: str) -> Self:
+    def from_audio(cls: type[Self], file: Path) -> Self:
         keys = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
         # TODO: generate from essentia
         genres = []
@@ -55,7 +58,7 @@ class DataMeta:
             sample_rate=44100,
             file_extension="wav",
             description="",
-            keywords=keywords,
+            keywords=FINETUNE_KEYWORD,
             duration=length,
             bpm=round(tempo),
             genre=genres,
@@ -63,14 +66,14 @@ class DataMeta:
             name="",
             instrument=instruments,
             moods=moods,
-            path=str(file.name),
+            path=os.environ["PATH_IN_DATAMETA"] + str(file.name),
         )
 
 
-def save_metadata(files: list[Path], output: Path, keywords: str) -> None:
+def save_metadata(files: list[Path], output: Path) -> None:
     with output.open("w") as f:
         for file in files:
-            entry = asdict(DataMeta.from_audio(file, keywords))
+            entry = asdict(DataMeta.from_audio(file))
             f.write(json.dumps(entry) + "\n")
 
 
@@ -93,4 +96,6 @@ datasource:
 
 
 if __name__ == "__main__":
-    pass
+    main(
+        "outputs/split",
+    )
