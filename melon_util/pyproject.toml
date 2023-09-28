@@ -6,12 +6,13 @@ authors = ["Your Name <you@example.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "3.11.4"
 pydub = "^0.25.1"
 loguru = "^0.7.2"
 pillow = "^10.0.1"
 python-dotenv = "^1.0.0"
 yt-dlp = "^2023.9.24"
+librosa = "^0.10.1"
 
 
 [tool.poetry.group.dev.dependencies]
