@@ -54,14 +54,14 @@ def save_config(output: Path) -> None:
     package_str = "package"
     yaml_contents = f"""#@{package_str} __global__
 
-    datasource:
-    max_channels: 2
-    max_sample_rate: 44100
+datasource:
+  max_channels: 2
+  max_sample_rate: 44100
 
-    evaluate: egs/eval
-    generate: egs/train
-    train: egs/train
-    valid: egs/eval
+  evaluate: egs/eval
+  generate: egs/train
+  train: egs/train
+  valid: egs/eval
     """
     with config_file.open("w") as f:
         f.write(yaml_contents)
