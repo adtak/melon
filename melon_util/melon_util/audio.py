@@ -40,7 +40,7 @@ def split(input_path: str) -> None:
     output_dir = input_dir / "split"
     output_dir.mkdir(exist_ok=True)
     for file in input_dir.glob("*.mp3"):
-        logger.info(f"Split audio {file.stem}")
+        logger.info(f"Split audio {file.name}")
         audio = AudioSegment.from_file(input_dir / file).set_frame_rate(44100)
         for i in range(0, len(audio), 30000):
             chunk = audio[i : i + 30000]
