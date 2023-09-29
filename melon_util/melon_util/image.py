@@ -9,13 +9,13 @@ def main() -> None:
     img_path = Path(os.environ["PROJECT_PATH"])
     img_name = "image.png"
     img = Image.open(img_path / img_name)
-    font = ImageFont.truetype("/System/Library/Fonts/Avenir Next.ttc", 128)
+    font = ImageFont.truetype("/System/Library/Fonts/Avenir Next.ttc", 200)
     ImageDraw.Draw(img).text(
-        (540, 960),
-        "AI Chill Beats",
+        (960, 540),
+        "Mix",
         "white",
         font=font,
-        anchor="md",
+        anchor="mm",
     )
     img.save(img_path / ("font_" + img_name))
 
