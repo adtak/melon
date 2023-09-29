@@ -11,7 +11,7 @@ from dotenv import load_dotenv
 FINETUNE_KEYWORD = "melonfinetune"
 
 
-def main(datasets_dir: str) -> None:
+def main(datasets_dir: str = "outputs/split") -> None:
     datasets_path = Path(datasets_dir)
     train, test = train_test_split(list(datasets_path.glob("*.wav")), 0.8)
     save_metadata(train, datasets_path / "train.jsonl")
@@ -98,4 +98,4 @@ datasource:
 
 if __name__ == "__main__":
     load_dotenv()
-    main("outputs/split")
+    main()

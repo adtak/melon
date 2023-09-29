@@ -36,7 +36,7 @@ def main(playlist_url: str, output_dir: str = "outputs") -> None:
                 f"Extracting {entry['title']} {url} ({i+1}/{len(entries)})",
             )
             try:
-                _save_info(ydl.extract_info(url, download=False))
+                _save_info(output_path, ydl.extract_info(url, download=False))
                 ydl.download([url])
             except yt_dlp.DownloadError:
                 logger.info(f"Failed to download {url}")
