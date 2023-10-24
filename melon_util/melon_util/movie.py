@@ -21,8 +21,8 @@ def fade_movie(project_path: Path) -> None:
         str(project_path / "image_c_animation.mp4"),
     ).loop(duration=30)
 
-    before_clip = before_clip.crossfadeout(30).set_start(0).set_position((0, 0))
-    change_clip = change_clip.crossfadein(30).set_start(0).set_position((0, 0))
+    before_clip = before_clip.crossfadeout(10).set_start(0).set_position((0, 0))
+    change_clip = change_clip.crossfadein(20).set_start(0).set_position((0, 0))
     merged_clip = CompositeVideoClip([before_clip, change_clip])
     merged_clip.write_videofile(str(project_path / "fade_video.mp4"), fps=60)
 
