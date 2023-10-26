@@ -16,15 +16,15 @@ def main() -> None:
 def fade_movie(project_path: Path) -> None:
     before_clip = VideoFileClip(
         str(project_path / "image_animation.mp4"),
-    ).loop(duration=30)
+    ).loop(duration=15)
     change_clip = VideoFileClip(
         str(project_path / "image_c_animation.mp4"),
-    ).loop(duration=30)
+    ).loop(duration=15)
 
-    before_clip = before_clip.crossfadeout(10).set_start(0).set_position((0, 0))
-    change_clip = change_clip.crossfadein(20).set_start(0).set_position((0, 0))
+    before_clip = before_clip.set_start(0).set_position((0, 0))
+    change_clip = change_clip.crossfadein(10).set_start(0).set_position((0, 0))
     merged_clip = CompositeVideoClip([before_clip, change_clip])
-    merged_clip.write_videofile(str(project_path / "fade_video.mp4"), fps=60)
+    merged_clip.write_videofile(str(project_path / "fade_video_1.mp4"), fps=60)
 
 
 def fade_image(project_path: Path) -> None:
