@@ -1,4 +1,7 @@
+import json
+import os
 from pathlib import Path
+from typing import TypedDict
 
 from moviepy.editor import (
     CompositeVideoClip,
@@ -8,44 +11,113 @@ from moviepy.editor import (
 )
 
 
+class ImageMovieSettings(TypedDict):
+    before_image: str
+    after_image: str
+    pre_time: int
+    fade_time: int
+    post_time: int
+
+
+class MovieBatchSettings(TypedDict):
+    movie_batch: list[ImageMovieSettings]
+
+
+class Settings(TypedDict):
+    movies: list[MovieBatchSettings]
+
+
+def load_settings() -> Settings:
+    with Path("movie.settings.json").open("r") as f:
+        return json.load(f)
+
+
 def main() -> None:
-    project_path = Path("/")
-    merge_movie(project_path)
+    prj_path = Path(os.environ["PROJECT_PATH"])
+    settings = load_settings()
+    for movie_idx, setting in enumerate(settings["movies"]):
+        movie_names, start_times = [], []
+        for file_idx, s in enumerate(setting["movie_batch"]):
+            movie_name = fade_image(
+                prj_path,
+                s["before_image"],
+                s["after_image"],
+                s["pre_time"],
+                s["fade_time"],
+                s["post_time"],
+                movie_idx,
+                file_idx,
+            )
+            movie_names.append(movie_name)
+            start_time = (s["pre_time"] + s["fade_time"] + s["post_time"]) * file_idx
+            start_times.append(start_time)
+        merge_movie(prj_path, movie_names, start_times, movie_idx)
 
 
-def merge_movie(project_path: Path) -> None:
-    clip_1 = VideoFileClip(
-        str(project_path / "1_fade_video_1.mp4"),
+def merge_movie(
+    project_path: Path,
+    movie_names: list[str],
+    start_times: list[int],
+    movie_idx: int = 1,
+) -> None:
+    clips = []
+    for name, start in zip(movie_names, start_times, strict=True):
+        clips.append(
+            VideoFileClip(str(project_path / name))
+            .set_start(start)
+            .set_position((0, 0)),
+        )
+    merged_clip = CompositeVideoClip(clips)
+    merged_clip.write_videofile(
+        str(project_path / f"{movie_idx}_fade_video.mp4"),
+        fps=60,
     )
-    clip_2 = VideoFileClip(
-        str(project_path / "1_fade_video_2.mp4"),
+
+
+def fade_image(
+    project_path: Path,
+    before_image: str,
+    after_image: str,
+    pre_time: int,
+    fade_time: int,
+    post_time: int,
+    movie_idx: int = 1,
+    file_idx: int = 1,
+) -> str:
+    before_clip = ImageClip(
+        str(project_path / before_image),
+        duration=pre_time + fade_time + post_time,
     )
-    clip_1 = clip_1.set_start(0).set_position((0, 0))
-    clip_2 = clip_2.set_start(10).set_position((0, 0))
-    merged_clip = CompositeVideoClip([clip_1, clip_2])
-    merged_clip.write_videofile(str(project_path / "1_fade_video.mp4"), fps=60)
+    after_clip = ImageClip(
+        str(project_path / after_image),
+        duration=fade_time + post_time,
+    )
+    before_clip = before_clip.set_start(0).set_position((0, 0))
+    change_clip = (
+        after_clip.crossfadein(fade_time).set_start(pre_time).set_position((0, 0))
+    )
+    merged_clip = CompositeVideoClip([before_clip, change_clip])
+    result_name = f"{movie_idx}_fade_video_{file_idx}.mp4"
+    merged_clip.write_videofile(str(project_path / result_name), fps=60)
+    return result_name
 
 
-def fade_movie(project_path: Path) -> None:
+def fade_movie(
+    project_path: Path,
+) -> None:
     before_clip = VideoFileClip(
         str(project_path / "image-1_animation.mp4"),
-    ).loop(duration=18)
+    ).loop(duration=30)
     change_clip = VideoFileClip(
         str(project_path / "image-2_animation.mp4"),
-    ).loop(duration=18)
+    ).loop(duration=27)
     before_clip = before_clip.set_start(0).set_position((0, 0))
-    change_clip = change_clip.crossfadein(12).set_start(0).set_position((0, 0))
+    change_clip = change_clip.crossfadein(20).set_start(3).set_position((0, 0))
     merged_clip = CompositeVideoClip([before_clip, change_clip])
-    merged_clip.write_videofile(str(project_path / "1_fade_video_1.mp4"), fps=60)
-
-
-def fade_image(project_path: Path) -> None:
-    before_clip = ImageClip(str(project_path / "1_image-1-.png"), duration=20)
-    change_clip = ImageClip(str(project_path / "1_image-2-.png"), duration=20)
-    before_clip = before_clip.set_start(0).set_position((0, 0))
-    change_clip = change_clip.crossfadein(15).set_start(0).set_position((0, 0))
-    merged_clip = CompositeVideoClip([before_clip, change_clip])
-    merged_clip.write_videofile(str(project_path / "1_fade_video_1.mp4"), fps=60)
+    merged_clip.write_videofile(
+        str(project_path / "fade_video_1.mp4"),
+        fps=60,
+    )
 
 
 def challenge(project_path: Path) -> None:
