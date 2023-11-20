@@ -46,6 +46,7 @@ ignore = [
   "D",
   "TD",
   "FIX",
+  "PLR0913",
 ]
 fixable = ["ALL"]
 unfixable = []
