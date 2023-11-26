@@ -3,6 +3,7 @@ import os
 from pathlib import Path
 from typing import TypedDict
 
+from dotenv import load_dotenv
 from moviepy.editor import (
     CompositeVideoClip,
     ImageClip,
@@ -12,8 +13,6 @@ from moviepy.editor import (
 
 
 class ImageMovieSettings(TypedDict):
-    before_image: str
-    after_image: str
     pre_time: int
     fade_time: int
     post_time: int
@@ -37,20 +36,23 @@ def main() -> None:
     settings = load_settings()
     for movie_idx, setting in enumerate(settings["movies"]):
         movie_names, start_times = [], []
-        for file_idx, s in enumerate(setting["movie_batch"]):
+        start_time = 0
+        for file_idx, batch_setting in enumerate(setting["movie_batch"]):
             movie_name = fade_image(
                 prj_path,
-                s["before_image"],
-                s["after_image"],
-                s["pre_time"],
-                s["fade_time"],
-                s["post_time"],
+                batch_setting["pre_time"],
+                batch_setting["fade_time"],
+                batch_setting["post_time"],
                 movie_idx,
                 file_idx,
             )
             movie_names.append(movie_name)
-            start_time = (s["pre_time"] + s["fade_time"] + s["post_time"]) * file_idx
             start_times.append(start_time)
+            start_time = (
+                batch_setting["pre_time"]
+                + batch_setting["fade_time"]
+                + batch_setting["post_time"]
+            )
         merge_movie(prj_path, movie_names, start_times, movie_idx)
 
 
@@ -58,7 +60,7 @@ def merge_movie(
     project_path: Path,
     movie_names: list[str],
     start_times: list[int],
-    movie_idx: int = 1,
+    movie_idx: int = 0,
 ) -> None:
     clips = []
     for name, start in zip(movie_names, start_times, strict=True):
@@ -76,20 +78,18 @@ def merge_movie(
 
 def fade_image(
     project_path: Path,
-    before_image: str,
-    after_image: str,
     pre_time: int,
     fade_time: int,
     post_time: int,
-    movie_idx: int = 1,
-    file_idx: int = 1,
+    movie_idx: int = 0,
+    file_idx: int = 0,
 ) -> str:
     before_clip = ImageClip(
-        str(project_path / before_image),
+        str(project_path / f"{movie_idx}_image-{file_idx}-.png"),
         duration=pre_time + fade_time + post_time,
     )
     after_clip = ImageClip(
-        str(project_path / after_image),
+        str(project_path / f"{movie_idx}_image-{file_idx+1}-.png"),
         duration=fade_time + post_time,
     )
     before_clip = before_clip.set_start(0).set_position((0, 0))
@@ -142,4 +142,5 @@ def challenge(project_path: Path) -> None:
 
 
 if __name__ == "__main__":
+    load_dotenv()
     main()
