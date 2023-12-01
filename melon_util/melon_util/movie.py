@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import TypedDict
 
 from dotenv import load_dotenv
+from loguru import logger
 from moviepy.editor import (
     CompositeVideoClip,
     ImageClip,
@@ -49,7 +50,8 @@ def main() -> None:
             movie_names.append(movie_name)
             start_times.append(start_time)
             start_time = (
-                batch_setting["pre_time"]
+                start_time
+                + batch_setting["pre_time"]
                 + batch_setting["fade_time"]
                 + batch_setting["post_time"]
             )
@@ -63,6 +65,8 @@ def merge_movie(
     movie_idx: int = 0,
 ) -> None:
     clips = []
+    logger.info(f"Movies: {movie_names}")
+    logger.info(f"Start times: {start_times}")
     for name, start in zip(movie_names, start_times, strict=True):
         clips.append(
             VideoFileClip(str(project_path / name))
