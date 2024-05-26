@@ -1,6 +1,0 @@
-.venv
-.env
-.vscode
-
-outputs
-*.settings.json
