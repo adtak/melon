@@ -9,6 +9,7 @@ readme = "README.md"
 python = "^3.11"
 aws-cdk-lib = "^2.143.0"
 constructs = "^10.3.0"
+aws-cdk-aws-lambda-python-alpha = "^2.143.0a0"
 
 
 [tool.poetry.group.dev.dependencies]
