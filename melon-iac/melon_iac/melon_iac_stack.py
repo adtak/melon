@@ -1,19 +1,17 @@
+from typing import Any, Self
+
 from aws_cdk import (
-    # Duration,
     Stack,
-    # aws_sqs as sqs,
 )
 from constructs import Construct
 
+
 class MelonIacStack(Stack):
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
+    def __init__(
+        self: Self,
+        scope: Construct,
+        construct_id: str,
+        **kwargs: Any,  # noqa: ANN401
+    ) -> None:
         super().__init__(scope, construct_id, **kwargs)
-
-        # The code that defines your stack goes here
-
-        # example resource
-        # queue = sqs.Queue(
-        #     self, "MelonIacQueue",
-        #     visibility_timeout=Duration.seconds(300),
-        # )

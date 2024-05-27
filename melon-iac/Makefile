@@ -3,11 +3,11 @@ format: black ruff
 
 .PHONY: black
 black:
-				poetry run black melon_iac/*
+				poetry run black *.py
 
 .PHONY: ruff
 ruff:
-				poetry run ruff check melon_iac/* --no-cache --fix
+				poetry run ruff check *.py --no-cache --fix
 
 .PHONY: mypy
 mypy:
