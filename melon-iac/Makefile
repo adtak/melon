@@ -7,7 +7,7 @@ black:
 
 .PHONY: ruff
 ruff:
-				poetry run ruff check melon_iac/* tests/* --no-cache --fix
+				poetry run ruff check melon_iac/* lambda/* tests/* --no-cache --fix
 
 .PHONY: mypy
 mypy:
