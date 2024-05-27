@@ -35,13 +35,13 @@ exclude = ["^cdk.out/$"]
 
 [tool.ruff]
 target-version = "py311"
-select = ["ALL"]
-ignore = [
+lint.select = ["ALL"]
+lint.ignore = [
   "D",
   "TD",
   "FIX",
   "PLR0913",
 ]
-fixable = ["ALL"]
-unfixable = []
+lint.fixable = ["ALL"]
+lint.unfixable = []
 line-length = 88
