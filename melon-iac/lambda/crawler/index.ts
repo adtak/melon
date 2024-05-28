@@ -12,7 +12,11 @@ export const handler: Handler = async (event, context) => {
     const span = $("span").filter((_, element) => {
       return $(element).text().includes("カートに追加する");
     });
-    console.log(`span: ${span.text()}`);
+    if (span.text()) {
+      console.log("in stock");
+    } else {
+      console.log("sold out");
+    }
   } catch (e) {
     if (axios.isAxiosError(e)) {
       console.log(e.message);
