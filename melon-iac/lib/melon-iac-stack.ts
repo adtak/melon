@@ -7,7 +7,7 @@ import * as sns from "aws-cdk-lib/aws-sns";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { SnsDestination } from "aws-cdk-lib/aws-lambda-destinations";
 
-export class MelonIacStack extends cdk.Stack {
+export class MelonStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
