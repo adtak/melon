@@ -30,6 +30,7 @@ export class MelonStack extends cdk.Stack {
       entry: "lambda/crawler/index.ts",
       handler: "handler",
       runtime: lambda.Runtime.NODEJS_LATEST,
+      memorySize: 512,
       timeout: cdk.Duration.seconds(60 * 10),
       environment: {},
       onFailure: new SnsDestination(errorTopic),
