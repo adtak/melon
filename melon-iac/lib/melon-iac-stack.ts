@@ -1,6 +1,8 @@
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 
+import * as events from "aws-cdk-lib/aws-events";
+import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as sns from "aws-cdk-lib/aws-sns";
@@ -23,8 +25,7 @@ export class MelonStack extends cdk.Stack {
         resources: [errorTopic.topicArn],
       })
     );
-
-    new NodejsFunction(this, "crawlerFunction", {
+    const crawlerFunc = new NodejsFunction(this, "crawlerFunction", {
       functionName: "melonCrawlerFunction",
       entry: "lambda/crawler/index.ts",
       handler: "handler",
@@ -33,5 +34,9 @@ export class MelonStack extends cdk.Stack {
       environment: {},
       onFailure: new SnsDestination(errorTopic),
     });
+    const crawlerRule = new events.Rule(this, "crawlerRule", {
+      schedule: events.Schedule.cron({ minute: "0", hour: "18" }),
+    });
+    crawlerRule.addTarget(new targets.LambdaFunction(crawlerFunc));
   }
 }
