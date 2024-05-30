@@ -12,25 +12,35 @@ export const handler: Handler = async (event, context) => {
   if (!urlT) {
     throw new Error("urlT is undefined.");
   }
-  console.log(`url: ${urlT}`);
-  try {
-    const res: AxiosResponse = await axios.get(urlT);
-    const $ = cheerio.load(res.data);
-    const span = $("span").filter((_, element) => {
-      return $(element).text().includes("カートに追加する");
-    });
-    if (span.text()) {
-      console.log("in stock");
-      const params = {
-        TopicArn: snsTopicArn,
-        Subject: "[Melon] In Stock",
-        Message: `URL: ${urlT}`,
-      };
-      await sns.publish(params).promise();
-    } else {
-      console.log("sold out");
-    }
-  } catch (e) {
-    throw e;
+  const instockUrls = [];
+
+  const instockUrl = await crawlSpan(urlT);
+  if (instockUrl) {
+    instockUrls.push(instockUrl);
+  }
+
+  for (const url of instockUrls) {
+    const params = {
+      TopicArn: snsTopicArn,
+      Subject: "[Melon] In Stock",
+      Message: `URL: ${url}`,
+    };
+    await sns.publish(params).promise();
+  }
+};
+
+const crawlSpan = async (url: string) => {
+  console.log(`Crawling span tag. URL: ${url}`);
+  const res: AxiosResponse = await axios.get(url);
+  const $ = cheerio.load(res.data);
+  const span = $("span").filter((_, element) => {
+    return $(element).text().includes("カートに追加する");
+  });
+  if (span.text()) {
+    console.log("in stock");
+    return url;
+  } else {
+    console.log("sold out");
+    return undefined;
   }
 };
