@@ -12,6 +12,9 @@ const env = {
 new MelonStack(
   app,
   "MelonStack",
-  { siteT: process.env.URL_T ? process.env.URL_T : "" },
+  {
+    siteT: process.env.URL_T ? process.env.URL_T : "",
+    siteK: process.env.URL_K ? process.env.URL_K : "",
+  },
   { env }
 );
