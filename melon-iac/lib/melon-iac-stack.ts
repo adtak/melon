@@ -9,8 +9,17 @@ import * as sns from "aws-cdk-lib/aws-sns";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { SnsDestination } from "aws-cdk-lib/aws-lambda-destinations";
 
+export type CrawlingURL = {
+  siteT: string;
+};
+
 export class MelonStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(
+    scope: Construct,
+    id: string,
+    crawlingURL: CrawlingURL,
+    props?: cdk.StackProps
+  ) {
     super(scope, id, props);
 
     const errorTopic = new sns.Topic(this, "errorTopic", {
@@ -32,7 +41,9 @@ export class MelonStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_LATEST,
       memorySize: 512,
       timeout: cdk.Duration.seconds(60 * 10),
-      environment: {},
+      environment: {
+        SITE_T: crawlingURL.siteT,
+      },
       onFailure: new SnsDestination(errorTopic),
     });
     const crawlerRule = new events.Rule(this, "crawlerRule", {

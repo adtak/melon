@@ -9,4 +9,9 @@ const env = {
   account: process.env.AWS_ACCOUNT,
   region: "ap-northeast-1",
 };
-new MelonStack(app, "MelonStack", { env });
+new MelonStack(
+  app,
+  "MelonStack",
+  { siteT: process.env.URL_T ? process.env.URL_T : "" },
+  { env }
+);
