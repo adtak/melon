@@ -69,7 +69,7 @@ export class MelonStack extends cdk.Stack {
       })
     );
     const crawlerRule = new events.Rule(this, "crawlerRule", {
-      schedule: events.Schedule.cron({ minute: "0", hour: "18" }),
+      schedule: events.Schedule.cron({ minute: "0", hour: "3,9,15" }),
     });
     crawlerRule.addTarget(new targets.LambdaFunction(crawlerFunc));
   }
