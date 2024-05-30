@@ -9,3 +9,7 @@ diff:
 .PHONY: deploy
 deploy:
 				cdk deploy
+
+.PHONY: run-local
+run-local:
+				sam local invoke -t ./cdk.out/MelonStack.template.json --container-host 127.0.0.1
