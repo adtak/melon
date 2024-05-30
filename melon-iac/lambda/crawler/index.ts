@@ -1,9 +1,13 @@
 import "dotenv/config";
 import { Handler } from "aws-lambda";
+import { SNS } from "aws-sdk";
 import axios, { AxiosResponse } from "axios";
 import * as cheerio from "cheerio";
 
+const sns = new SNS();
+
 export const handler: Handler = async (event, context) => {
+  const snsTopicArn = process.env.SNS_TOPIC_ARN;
   const urlT = process.env.SITE_T;
   if (!urlT) {
     throw new Error("urlT is undefined.");
@@ -17,14 +21,16 @@ export const handler: Handler = async (event, context) => {
     });
     if (span.text()) {
       console.log("in stock");
+      const params = {
+        TopicArn: snsTopicArn,
+        Subject: "[Melon] In Stock",
+        Message: `URL: ${urlT}`,
+      };
+      await sns.publish(params).promise();
     } else {
       console.log("sold out");
     }
   } catch (e) {
-    if (axios.isAxiosError(e)) {
-      console.log(e.message);
-    } else {
-      console.log("unknown error");
-    }
+    throw e;
   }
 };

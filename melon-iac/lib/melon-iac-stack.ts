@@ -34,6 +34,20 @@ export class MelonStack extends cdk.Stack {
         resources: [errorTopic.topicArn],
       })
     );
+
+    const instockTopic = new sns.Topic(this, "instockTopic", {
+      topicName: "instockTopic",
+      displayName: "instockTopic",
+    });
+    instockTopic.addToResourcePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["sns:Publish"],
+        principals: [new iam.ServicePrincipal("lambda.amazonaws.com")],
+        resources: [instockTopic.topicArn],
+      })
+    );
+
     const crawlerFunc = new NodejsFunction(this, "crawlerFunction", {
       functionName: "melonCrawlerFunction",
       entry: "lambda/crawler/index.ts",
@@ -42,10 +56,18 @@ export class MelonStack extends cdk.Stack {
       memorySize: 512,
       timeout: cdk.Duration.seconds(60 * 10),
       environment: {
+        SNS_TOPIC_ARN: instockTopic.topicArn,
         SITE_T: crawlingURL.siteT,
       },
       onFailure: new SnsDestination(errorTopic),
     });
+    crawlerFunc.addToRolePolicy(
+      new iam.PolicyStatement({
+        effect: iam.Effect.ALLOW,
+        actions: ["sns:Publish"],
+        resources: [instockTopic.topicArn],
+      })
+    );
     const crawlerRule = new events.Rule(this, "crawlerRule", {
       schedule: events.Schedule.cron({ minute: "0", hour: "18" }),
     });
