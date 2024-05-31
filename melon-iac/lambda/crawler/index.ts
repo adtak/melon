@@ -27,11 +27,13 @@ export const handler: Handler = async (event, context) => {
     }
   }
 
-  for (const url of instockUrls) {
+  if (instockUrls.length) {
     const params = {
       TopicArn: snsTopicArn,
       Subject: "[Melon] In Stock",
-      Message: `URL: ${url}`,
+      Message:
+        "Some items are in stock. Details are as follows.\n" +
+        instockUrls.map((url) => `URL: ${url}`).join("\n"),
     };
     await sns.publish(params).promise();
   }
