@@ -19,16 +19,30 @@ export const handler: Handler = async (event, context) => {
       instockUrls.push(instockUrl);
     }
   }
-  const urlK = process.env.SITE_K;
-  if (urlK) {
-    const instockUrl = await crawlingButton(urlK, "カートに入れる");
+  const urlK1 = process.env.SITE_K1;
+  if (urlK1) {
+    const instockUrl = await crawlingButton(urlK1, "カートに入れる");
     if (instockUrl) {
       instockUrls.push(instockUrl);
     }
   }
-  const urlF = process.env.SITE_F;
-  if (urlF) {
-    const instockUrl = await crawlingSpan(urlF, "カートに入れる");
+  const urlK2 = process.env.SITE_K2;
+  if (urlK2) {
+    const instockUrl = await crawlingButton(urlK2, "カートに入れる");
+    if (instockUrl) {
+      instockUrls.push(instockUrl);
+    }
+  }
+  const urlF1 = process.env.SITE_F1;
+  if (urlF1) {
+    const instockUrl = await crawlingSpan(urlF1, "カートに入れる");
+    if (instockUrl) {
+      instockUrls.push(instockUrl);
+    }
+  }
+  const urlF2 = process.env.SITE_F2;
+  if (urlF2) {
+    const instockUrl = await crawlingSpan(urlF2, "カートに入れる");
     if (instockUrl) {
       instockUrls.push(instockUrl);
     }

@@ -11,8 +11,10 @@ import { SnsDestination } from "aws-cdk-lib/aws-lambda-destinations";
 
 export type CrawlingURL = {
   siteT: string;
-  siteK: string;
-  siteF: string;
+  siteK1: string;
+  siteK2: string;
+  siteF1: string;
+  siteF2: string;
 };
 
 export class MelonStack extends cdk.Stack {
@@ -60,8 +62,10 @@ export class MelonStack extends cdk.Stack {
       environment: {
         SNS_TOPIC_ARN: instockTopic.topicArn,
         SITE_T: crawlingURL.siteT,
-        SITE_K: crawlingURL.siteK,
-        SITE_F: crawlingURL.siteF,
+        SITE_K1: crawlingURL.siteK1,
+        SITE_K2: crawlingURL.siteK2,
+        SITE_F1: crawlingURL.siteF1,
+        SITE_F2: crawlingURL.siteF2,
       },
       onFailure: new SnsDestination(errorTopic),
     });
