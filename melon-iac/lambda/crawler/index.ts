@@ -14,14 +14,21 @@ export const handler: Handler = async (event, context) => {
 
   const urlT = process.env.SITE_T;
   if (urlT) {
-    const instockUrl = await crawlingSpan(urlT);
+    const instockUrl = await crawlingSpan(urlT, "カートに追加する");
     if (instockUrl) {
       instockUrls.push(instockUrl);
     }
   }
   const urlK = process.env.SITE_K;
   if (urlK) {
-    const instockUrl = await crawlingButton(urlK);
+    const instockUrl = await crawlingButton(urlK, "カートに入れる");
+    if (instockUrl) {
+      instockUrls.push(instockUrl);
+    }
+  }
+  const urlF = process.env.SITE_F;
+  if (urlF) {
+    const instockUrl = await crawlingSpan(urlF, "カートに入れる");
     if (instockUrl) {
       instockUrls.push(instockUrl);
     }
@@ -39,22 +46,22 @@ export const handler: Handler = async (event, context) => {
   }
 };
 
-const crawlingSpan = async (url: string) => {
+const crawlingSpan = async (url: string, keyword: string) => {
   const parseFunc = (res: AxiosResponse) => {
     const $ = cheerio.load(res.data);
     const span = $("span").filter((_, element) => {
-      return $(element).text().includes("カートに追加する");
+      return $(element).text().includes(keyword);
     });
     return span.text();
   };
   return await crawlingURL(url, parseFunc);
 };
 
-const crawlingButton = async (url: string) => {
+const crawlingButton = async (url: string, keyword: string) => {
   const parseFunc = (res: AxiosResponse) => {
     const $ = cheerio.load(res.data);
     const button = $("button").filter((_, element) => {
-      return $(element).text().includes("カートに入れる");
+      return $(element).text().includes(keyword);
     });
     return button.text();
   };

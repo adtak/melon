@@ -15,6 +15,7 @@ new MelonStack(
   {
     siteT: process.env.URL_T ? process.env.URL_T : "",
     siteK: process.env.URL_K ? process.env.URL_K : "",
+    siteF: process.env.URL_F ? process.env.URL_F : "",
   },
   { env }
 );
